@@ -63,12 +63,10 @@
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
       let point = touches.first!.location(in: self)
-      
-      knobFrame =
-        knobFrame
-        |> RectUtil.updateRectHorizontalCenter(xCenter: point.x)
-        |> RectUtil.moveRect(toLeft: draggingPoint)
-      
+		
+		knobFrame = RectUtil.updateRectHorizontalCenter(xCenter: point.x, rect:knobFrame)
+		knobFrame = RectUtil.moveRect(toLeft: draggingPoint, knobFrame)
+		
       knobMovementCallback?(knobView.frame)
     }
     

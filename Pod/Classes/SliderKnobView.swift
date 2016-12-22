@@ -29,9 +29,13 @@ enum KnobPlacment {
 
 class SliderKnobViewImpl {
   static func adjustKnobFrame(_ knobFrame: CGRect, viewFrame: CGRect, boundRange: BoundRange) -> CGRect {
-    return knobFrame
-      |> RectUtil.centerRectVertically(height: viewFrame.height)
-      |> RectUtil.constraintRectWithinBounds(boundsToConstraint: boundRange)
+	var frame = knobFrame
+	
+	frame = RectUtil.centerRectVertically(height: viewFrame.height, rect: frame)
+	
+	frame = RectUtil.constraintRectWithinBounds(boundsToConstraint: boundRange, original: frame)
+	
+	return frame
   }
 }
 

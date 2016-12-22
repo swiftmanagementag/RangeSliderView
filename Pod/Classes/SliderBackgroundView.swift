@@ -29,17 +29,18 @@ class SliderBackgroundViewImpl {
   
   static func drawRect(forView view: SliderBackground, dirtyRect: CGRect) {
     view.emptyColor.set()
-    dirtyRect
-      |> RectUtil.setRectHeight(height: 3)
-      |> RectUtil.centerRectVertically(height: view.frame.height)
-      |> drawCapsule
+	var rect = dirtyRect
+    rect = RectUtil.setRectHeight(height: 3, rect)
+	rect = RectUtil.centerRectVertically(height: view.frame.height, rect: rect)
+	drawCapsule(frame: rect)
     
     view.fullColor.set()
-    dirtyRect
-      |> RectUtil.applyBoundRange(boundRange: view.boundRange.boundByApplyingInset(-3))
-      |> RectUtil.setRectHeight(height: 3)
-      |> RectUtil.centerRectVertically(height: view.frame.height)
-      |> drawCapsule
+	
+	rect = RectUtil.applyBoundRange(boundRange: view.boundRange.boundByApplyingInset(-3), rect)
+    rect = RectUtil.setRectHeight(height: 3, rect)
+	rect = RectUtil.centerRectVertically(height: view.frame.height, rect: rect)
+	
+	drawCapsule(frame: rect)
   }
   
   static func drawCapsule(frame: CGRect) {

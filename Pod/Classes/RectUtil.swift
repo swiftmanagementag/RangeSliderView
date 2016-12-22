@@ -11,7 +11,7 @@ import Foundation
 
 class RectUtil {
   
-  static func updateRectHorizontalCenter(xCenter: CGFloat, _ rect: CGRect) -> CGRect {
+  static func updateRectHorizontalCenter(xCenter: CGFloat,  rect: CGRect) -> CGRect {
     return CGRect(
       x: xCenter - (rect.size.height / 2.0),
       y: 0,
@@ -29,7 +29,7 @@ class RectUtil {
     return newRect
   }
   
-  static func centerRectVertically(height: CGFloat, _ rect: CGRect) -> CGRect {
+  static func centerRectVertically(height: CGFloat, rect: CGRect) -> CGRect {
     return CGRect(
       x: rect.origin.x,
       y: (height - rect.size.height) / 2.0,

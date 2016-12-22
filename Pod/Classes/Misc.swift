@@ -8,9 +8,14 @@
 
 import Foundation
 
-infix operator |> {
-associativity left
-precedence 100
+precedencegroup FramePrecendence {
+	associativity: left
+	higherThan: AssignmentPrecedence
+
+}
+infix operator |> : FramePrecendence {
+	associativity left
+	precedence 100
 }
 
 func |> <T, W> (left: T?, right: (T) -> W?) -> W? {

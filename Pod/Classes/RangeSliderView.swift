@@ -100,7 +100,7 @@ extension RangeSlider {
   
   fileprivate func locationForView(_ view: SliderKnobView) -> CGFloat {
     let xLocation = getViewCenterX(view)
-    return locationInRange(range: fullRange, viewWidth: self.width, xLocationInView: xLocation,
+    return locationInRange(range: fullRange  as! Range, viewWidth: self.width, xLocationInView: xLocation,
       itemWidth: minimumKnobView.knobFrame.size.width)
   }
   
@@ -110,8 +110,8 @@ extension RangeSlider {
   
   func updateKnobsPlacements() {
     let range = BoundRange.range(
-      withFullRange: fullRange,
-      selectedRange: selectedRange,
+      withFullRange: fullRange as! Range,
+      selectedRange: selectedRange as! Range,
       fullWidth: width)
     
     backgroundView.boundRange = range.boundByApplyingInset(7)
