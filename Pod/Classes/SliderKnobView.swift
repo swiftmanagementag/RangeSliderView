@@ -11,16 +11,16 @@ import Foundation
 
 enum KnobPlacment {
   
-  case RangeStart
-  case RangeEnd
+  case rangeStart
+  case rangeEnd
   
   func placeRect(forRange range: BoundRange, size: CGSize) -> CGRect {
     switch self {
-    case RangeStart:
-      return CGRectMake(range.start, 0, size.width, size.height)
+    case .rangeStart:
+      return CGRect(x: range.start, y: 0, width: size.width, height: size.height)
       
-    case RangeEnd:
-      return CGRectMake(range.end - size.width, 0, size.width, size.height)
+    case .rangeEnd:
+      return CGRect(x: range.end - size.width, y: 0, width: size.width, height: size.height)
     }
   }
   
@@ -28,7 +28,7 @@ enum KnobPlacment {
 
 
 class SliderKnobViewImpl {
-  static func adjustKnobFrame(knobFrame: CGRect, viewFrame: CGRect, boundRange: BoundRange) -> CGRect {
+  static func adjustKnobFrame(_ knobFrame: CGRect, viewFrame: CGRect, boundRange: BoundRange) -> CGRect {
     return knobFrame
       |> RectUtil.centerRectVertically(height: viewFrame.height)
       |> RectUtil.constraintRectWithinBounds(boundsToConstraint: boundRange)
@@ -38,7 +38,7 @@ class SliderKnobViewImpl {
 protocol SliderKnob {
   var boundRange: BoundRange { get set }
   var knobFrame: CGRect { get set }
-  var knobMovementCallback : (CGRect -> ())? { get set }
+  var knobMovementCallback : ((CGRect) -> ())? { get set }
   
   var knobView: KnobView! { get set }
   

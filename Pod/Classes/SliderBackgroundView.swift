@@ -42,29 +42,29 @@ class SliderBackgroundViewImpl {
       |> drawCapsule
   }
   
-  static func drawCapsule(frame frame: CGRect) {
-    let height = CGRectGetHeight(frame)
+  static func drawCapsule(frame: CGRect) {
+    let height = frame.height
     
     if (frame.width - height) < 4 { return }
     
     #if os(OSX)
       let ovalPath = NSBezierPath(ovalInRect: NSMakeRect(frame.minX, frame.minY, height, frame.height))
     #else
-      let ovalPath = UIBezierPath(ovalInRect: CGRectMake(frame.minX, frame.minY, height, frame.height))
+      let ovalPath = UIBezierPath(ovalIn: CGRect(x: frame.minX, y: frame.minY, width: height, height: frame.height))
     #endif
     ovalPath.fill()
     
     #if os(OSX)
       let oval2Path = NSBezierPath(ovalInRect: NSMakeRect(frame.minX + frame.width - height, frame.minY, height, frame.height))
     #else
-      let oval2Path = UIBezierPath(ovalInRect: CGRectMake(frame.minX + frame.width - height, frame.minY, height, frame.height))
+      let oval2Path = UIBezierPath(ovalIn: CGRect(x: frame.minX + frame.width - height, y: frame.minY, width: height, height: frame.height))
     #endif
     oval2Path.fill()
     
     #if os(OSX)
       let rectanglePath = NSBezierPath(rect: NSMakeRect(frame.minX + (height/2), frame.minY, frame.width - height, frame.height))
     #else
-      let rectanglePath = UIBezierPath(rect: CGRectMake(frame.minX + (height/2), frame.minY, frame.width - height, frame.height))
+      let rectanglePath = UIBezierPath(rect: CGRect(x: frame.minX + (height/2), y: frame.minY, width: frame.width - height, height: frame.height))
     #endif
     rectanglePath.fill()
   }

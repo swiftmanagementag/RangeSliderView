@@ -18,8 +18,8 @@ protocol RangeSlider: AnyObject {
   var minimumKnobView: SliderKnob { get set }
   var maximumKnobView: SliderKnob { get set }
   
-  var fullRange: Range<Int> { get set }
-  var selectedRange: Range<Int> { get set }
+  var fullRange: CountableRange<Int> { get set }
+  var selectedRange: CountableRange<Int> { get set }
   
   var bounds: CGRect { get set }
   
@@ -34,15 +34,15 @@ protocol RangeSlider: AnyObject {
   #if os(OSX)
   func addSubview(view: NSView)
   #else
-  func addSubview(view: UIView)
+  func addSubview(_ view: UIView)
   #endif
 }
 
 
 extension RangeSlider {
   
-  private var width: CGFloat {
-    return CGRectGetWidth(bounds)
+  fileprivate var width: CGFloat {
+    return bounds.width
   }
   
   func addViewsAndRegisterCallbacks() {
@@ -67,25 +67,25 @@ extension RangeSlider {
     subView.frame = bounds
   }
   #else
-  private func addToView(subView: UIView) {
+  fileprivate func addToView(_ subView: UIView) {
     addSubview(subView)
     subView.frame = bounds
   }
   #endif
   
-  private func updateKnobViews() {
-    let minimumXAllowed = CGRectGetMaxX(minimumKnobView.knobFrame)
+  fileprivate func updateKnobViews() {
+    let minimumXAllowed = minimumKnobView.knobFrame.maxX
     self.maximumKnobView.boundRange.moveStart(minimumXAllowed)
     self.backgroundView.boundRange.moveStart(minimumXAllowed)
     
-    let maximumXAllowed = CGRectGetMinX(maximumKnobView.knobFrame)
+    let maximumXAllowed = maximumKnobView.knobFrame.minX
     self.minimumKnobView.boundRange.moveEnd(maximumXAllowed)
     self.backgroundView.boundRange.moveEnd(maximumXAllowed)
     
     self.updateSelectedRange()
   }
   
-  private func updateSelectedRange() {
+  fileprivate func updateSelectedRange() {
     
     let start = Int(locationForView(minimumKnobView.view))
     let end = Int(locationForView(maximumKnobView.view))
@@ -98,14 +98,14 @@ extension RangeSlider {
     selectedValuesChanged?(minimumSelectedValue, maximumSelectedValue)
   }
   
-  private func locationForView(view: SliderKnobView) -> CGFloat {
+  fileprivate func locationForView(_ view: SliderKnobView) -> CGFloat {
     let xLocation = getViewCenterX(view)
     return locationInRange(range: fullRange, viewWidth: self.width, xLocationInView: xLocation,
       itemWidth: minimumKnobView.knobFrame.size.width)
   }
   
-  private func getViewCenterX(view: SliderKnobView) -> CGFloat {
-    return CGRectGetMinX(view.knobFrame) + (CGRectGetWidth(view.knobFrame)) / 2.0
+  fileprivate func getViewCenterX(_ view: SliderKnobView) -> CGFloat {
+    return view.knobFrame.minX + (view.knobFrame.width) / 2.0
   }
   
   func updateKnobsPlacements() {
@@ -119,8 +119,8 @@ extension RangeSlider {
     minimumKnobView.boundRange = BoundRange(start: 0, width: width)
     maximumKnobView.boundRange = BoundRange(start: 0, width: width)
     
-    minimumKnobView.knobFrame = KnobPlacment.RangeStart.placeRect(forRange: range, size: minimumKnobView.knobFrame.size)
-    maximumKnobView.knobFrame = KnobPlacment.RangeEnd.placeRect(forRange: range, size: maximumKnobView.knobFrame.size)
+    minimumKnobView.knobFrame = KnobPlacment.rangeStart.placeRect(forRange: range, size: minimumKnobView.knobFrame.size)
+    maximumKnobView.knobFrame = KnobPlacment.rangeEnd.placeRect(forRange: range, size: maximumKnobView.knobFrame.size)
   }
   
 }

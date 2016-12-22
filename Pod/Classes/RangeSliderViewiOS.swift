@@ -11,12 +11,12 @@
   
   /// Range slider view
   @IBDesignable
-  public class RangeSliderView: UIControl, RangeSlider {
+  open class RangeSliderView: UIControl, RangeSlider {
     
     
     /// Minimum slider selectable value
     /// Defaults to 0
-    @IBInspectable public var minimumValue: Int = 0 {
+    @IBInspectable open var minimumValue: Int = 0 {
       didSet {
         fullRange = minimumValue..<maximumValue
       }
@@ -24,7 +24,7 @@
     
     /// Maximum slider selectable value
     /// Defaults to 100
-    @IBInspectable public var maximumValue: Int = 100 {
+    @IBInspectable open var maximumValue: Int = 100 {
       didSet {
         fullRange = minimumValue..<maximumValue
       }
@@ -32,9 +32,9 @@
     
     /// Set/Get the slider minimum selected value
     /// Defaults to 0
-    @IBInspectable public var minimumSelectedValue: Int {
+    @IBInspectable open var minimumSelectedValue: Int {
       get {
-        return selectedRange.startIndex
+        return selectedRange.lowerBound
       }
       
       set {
@@ -46,9 +46,9 @@
     
     /// Set/Get the slider maximum selected value
     /// Defaults to 100
-    @IBInspectable public var maximumSelectedValue: Int {
+    @IBInspectable open var maximumSelectedValue: Int {
       get {
-        return selectedRange.endIndex
+        return selectedRange.upperBound
       }
       
       set {
@@ -59,7 +59,7 @@
     
     
     /// Callback called when minimum and maximum slider knobs are moved
-    public var selectedValuesChanged: ((Int, Int) -> ())?
+    open var selectedValuesChanged: ((Int, Int) -> ())?
     
     // Mark: - Private
     
@@ -67,13 +67,13 @@
     var minimumKnobView: SliderKnob = SliderKnobView()
     var maximumKnobView: SliderKnob = SliderKnobView()
     
-    var fullRange: Range<Int> = 0..<100 {
+    var fullRange: CountableRange<Int> = 0..<100 {
       didSet {
         updateKnobsPlacements()
       }
     }
     
-    var selectedRange: Range<Int> =  0..<100
+    var selectedRange: CountableRange<Int> =  0..<100
     
     public override init(frame: CGRect) {
       super.init(frame: frame)
@@ -85,7 +85,7 @@
       addViewsAndRegisterCallbacks()
     }
     
-    public override var bounds: CGRect {
+    open override var bounds: CGRect {
       didSet {
         backgroundView.view.frame = bounds
         minimumKnobView.view.frame = bounds
@@ -96,7 +96,7 @@
     }
     
     func informAboutValueChanged() {
-      sendActionsForControlEvents(.ValueChanged)
+      sendActions(for: .valueChanged)
     }
     
   }
