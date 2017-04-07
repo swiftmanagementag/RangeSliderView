@@ -13,10 +13,7 @@ precedencegroup FramePrecendence {
 	higherThan: AssignmentPrecedence
 
 }
-infix operator |> : FramePrecendence {
-	associativity left
-	precedence 100
-}
+infix operator |> : FramePrecendence 
 
 func |> <T, W> (left: T?, right: (T) -> W?) -> W? {
   guard let left = left else { return nil }

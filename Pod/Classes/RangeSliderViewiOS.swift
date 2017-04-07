@@ -67,13 +67,13 @@
     var minimumKnobView: SliderKnob = SliderKnobView()
     var maximumKnobView: SliderKnob = SliderKnobView()
     
-    var fullRange: CountableRange<Int> = 0..<100 {
+    public var fullRange: Range<Int> = 0..<100 {
       didSet {
         updateKnobsPlacements()
       }
     }
     
-    var selectedRange: CountableRange<Int> =  0..<100
+    var selectedRange: Range<Int> =  0..<100
     
     public override init(frame: CGRect) {
       super.init(frame: frame)

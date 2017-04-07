@@ -18,8 +18,8 @@ protocol RangeSlider: AnyObject {
   var minimumKnobView: SliderKnob { get set }
   var maximumKnobView: SliderKnob { get set }
   
-  var fullRange: CountableRange<Int> { get set }
-  var selectedRange: CountableRange<Int> { get set }
+  var fullRange: Range<Int> { get set }
+  var selectedRange: Range<Int> { get set }
   
   var bounds: CGRect { get set }
   
@@ -100,7 +100,7 @@ extension RangeSlider {
   
   fileprivate func locationForView(_ view: SliderKnobView) -> CGFloat {
     let xLocation = getViewCenterX(view)
-    return locationInRange(range: fullRange  as! Range, viewWidth: self.width, xLocationInView: xLocation,
+    return locationInRange(range: fullRange  , viewWidth: self.width, xLocationInView: xLocation,
       itemWidth: minimumKnobView.knobFrame.size.width)
   }
   
@@ -110,8 +110,8 @@ extension RangeSlider {
   
   func updateKnobsPlacements() {
     let range = BoundRange.range(
-      withFullRange: fullRange as! Range,
-      selectedRange: selectedRange as! Range,
+      withFullRange: fullRange ,
+      selectedRange: selectedRange ,
       fullWidth: width)
     
     backgroundView.boundRange = range.boundByApplyingInset(7)
