@@ -5,7 +5,7 @@ import Foundation
 public func match(expectedValue: String?) -> NonNilMatcherFunc<String> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "match <\(stringify(expectedValue))>"
-        
+
         if let actual = try actualExpression.evaluate() {
             if let regexp = expectedValue {
                 return actual.rangeOfString(regexp, options: .RegularExpressionSearch) != nil
@@ -24,4 +24,3 @@ extension NMBObjCMatcher {
         }
     }
 }
-

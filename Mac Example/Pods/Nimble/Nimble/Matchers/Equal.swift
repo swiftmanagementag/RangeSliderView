@@ -61,25 +61,25 @@ public func equal<T: Equatable>(expectedValue: [T?]) -> NonNilMatcherFunc<[T?]> 
             if expectedValue.count != actualValue.count {
                 return false
             }
-            
+
             for (index, item) in actualValue.enumerate() {
                 let otherItem = expectedValue[index]
-                if item == nil && otherItem == nil {
+                if item == nil, otherItem == nil {
                     continue
-                } else if item == nil && otherItem != nil {
+                } else if item == nil, otherItem != nil {
                     return false
-                } else if item != nil && otherItem == nil {
+                } else if item != nil, otherItem == nil {
                     return false
                 } else if item! != otherItem! {
                     return false
                 }
             }
-            
+
             return true
         } else {
             failureMessage.postfixActual = " (use beNil() to match nils)"
         }
-        
+
         return false
     }
 }
@@ -130,50 +130,50 @@ private func equal<T>(expectedValue: Set<T>?, stringify: Set<T>? -> String) -> N
     }
 }
 
-public func ==<T: Equatable>(lhs: Expectation<T>, rhs: T?) {
+public func == <T: Equatable>(lhs: Expectation<T>, rhs: T?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T: Equatable>(lhs: Expectation<T>, rhs: T?) {
+public func != <T: Equatable>(lhs: Expectation<T>, rhs: T?) {
     lhs.toNot(equal(rhs))
 }
 
-public func ==<T: Equatable>(lhs: Expectation<[T]>, rhs: [T]?) {
+public func == <T: Equatable>(lhs: Expectation<[T]>, rhs: [T]?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T: Equatable>(lhs: Expectation<[T]>, rhs: [T]?) {
+public func != <T: Equatable>(lhs: Expectation<[T]>, rhs: [T]?) {
     lhs.toNot(equal(rhs))
 }
 
-public func ==<T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func == <T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func != <T>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.toNot(equal(rhs))
 }
 
-public func ==<T: Comparable>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func == <T: Comparable>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T: Comparable>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
+public func != <T: Comparable>(lhs: Expectation<Set<T>>, rhs: Set<T>?) {
     lhs.toNot(equal(rhs))
 }
 
-public func ==<T: Equatable, C: Equatable>(lhs: Expectation<[T: C]>, rhs: [T: C]?) {
+public func == <T: Equatable, C: Equatable>(lhs: Expectation<[T: C]>, rhs: [T: C]?) {
     lhs.to(equal(rhs))
 }
 
-public func !=<T: Equatable, C: Equatable>(lhs: Expectation<[T: C]>, rhs: [T: C]?) {
+public func != <T: Equatable, C: Equatable>(lhs: Expectation<[T: C]>, rhs: [T: C]?) {
     lhs.toNot(equal(rhs))
 }
 
 extension NMBObjCMatcher {
     public class func equalMatcher(expected: NSObject) -> NMBMatcher {
         return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
-            return try! equal(expected).matches(actualExpression, failureMessage: failureMessage)
+            try! equal(expected).matches(actualExpression, failureMessage: failureMessage)
         }
     }
 }

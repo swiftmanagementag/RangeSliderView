@@ -9,7 +9,7 @@ public class FailureMessage: NSObject {
     public var to: String = "to"
     public var postfixMessage: String = "match"
     public var postfixActual: String = ""
-    public var userDescription: String? = nil
+    public var userDescription: String?
 
     public var stringValue: String {
         get {
@@ -26,8 +26,7 @@ public class FailureMessage: NSObject {
 
     internal var _stringValueOverride: String?
 
-    public override init() {
-    }
+    override public init() {}
 
     public init(stringValue: String) {
         _stringValueOverride = stringValue
@@ -46,11 +45,11 @@ public class FailureMessage: NSObject {
             value = "\(expected) \(to) \(postfixMessage), got \(actualValue)\(postfixActual)"
         }
         value = stripNewlines(value)
-        
+
         if let userDescription = userDescription {
             return "\(userDescription)\n\(value)"
         }
-        
+
         return value
     }
 }

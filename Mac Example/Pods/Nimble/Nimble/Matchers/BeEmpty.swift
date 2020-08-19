@@ -1,6 +1,5 @@
 import Foundation
 
-
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
 public func beEmpty<S: SequenceType>() -> NonNilMatcherFunc<S> {
@@ -21,7 +20,7 @@ public func beEmpty() -> NonNilMatcherFunc<String> {
     return NonNilMatcherFunc { actualExpression, failureMessage in
         failureMessage.postfixMessage = "be empty"
         let actualString = try actualExpression.evaluate()
-        return actualString == nil || (actualString! as NSString).length  == 0
+        return actualString == nil || (actualString! as NSString).length == 0
     }
 }
 
@@ -41,21 +40,21 @@ public func beEmpty() -> NonNilMatcherFunc<NSString> {
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
 public func beEmpty() -> NonNilMatcherFunc<NSDictionary> {
-	return NonNilMatcherFunc { actualExpression, failureMessage in
-		failureMessage.postfixMessage = "be empty"
-		let actualDictionary = try actualExpression.evaluate()
-		return actualDictionary == nil || actualDictionary!.count == 0
-	}
+    return NonNilMatcherFunc { actualExpression, failureMessage in
+        failureMessage.postfixMessage = "be empty"
+        let actualDictionary = try actualExpression.evaluate()
+        return actualDictionary == nil || actualDictionary!.count == 0
+    }
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this
 /// means the are no items in that collection. For strings, it is an empty string.
 public func beEmpty() -> NonNilMatcherFunc<NSArray> {
-	return NonNilMatcherFunc { actualExpression, failureMessage in
-		failureMessage.postfixMessage = "be empty"
-		let actualArray = try actualExpression.evaluate()
-		return actualArray == nil || actualArray!.count == 0
-	}
+    return NonNilMatcherFunc { actualExpression, failureMessage in
+        failureMessage.postfixMessage = "be empty"
+        let actualArray = try actualExpression.evaluate()
+        return actualArray == nil || actualArray!.count == 0
+    }
 }
 
 /// A Nimble matcher that succeeds when a value is "empty". For collections, this

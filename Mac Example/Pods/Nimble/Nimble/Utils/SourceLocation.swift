@@ -1,7 +1,6 @@
 import Foundation
 
-
-public class SourceLocation : NSObject {
+public class SourceLocation: NSObject {
     public let file: String
     public let line: UInt
 

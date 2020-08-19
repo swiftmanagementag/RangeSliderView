@@ -1,14 +1,14 @@
 import Foundation
 
 /**
-    Example groups are logical groupings of examples, defined with
-    the `describe` and `context` functions. Example groups can share
-    setup and teardown code.
-*/
-final public class ExampleGroup: NSObject {
-    weak internal var parent: ExampleGroup?
+ Example groups are logical groupings of examples, defined with
+ the `describe` and `context` functions. Example groups can share
+ setup and teardown code.
+ */
+public final class ExampleGroup: NSObject {
+    internal weak var parent: ExampleGroup?
     internal let hooks = ExampleHooks()
-    
+
     internal var phase: HooksPhase = .NothingExecuted
 
     private let internalDescription: String
@@ -18,19 +18,19 @@ final public class ExampleGroup: NSObject {
     private var childExamples = [Example]()
 
     internal init(description: String, flags: FilterFlags, isInternalRootExampleGroup: Bool = false) {
-        self.internalDescription = description
+        internalDescription = description
         self.flags = flags
         self.isInternalRootExampleGroup = isInternalRootExampleGroup
     }
 
-    public override var description: String {
+    override public var description: String {
         return internalDescription
     }
 
     /**
-        Returns a list of examples that belong to this example group,
-        or to any of its descendant example groups.
-    */
+         Returns a list of examples that belong to this example group,
+         or to any of its descendant example groups.
+     */
     public var examples: [Example] {
         var examples = childExamples
         for group in childGroups {
@@ -41,8 +41,8 @@ final public class ExampleGroup: NSObject {
 
     internal var name: String? {
         if let parent = parent {
-            switch(parent.name) {
-            case .Some(let name): return "\(name), \(description)"
+            switch parent.name {
+            case let .Some(name): return "\(name), \(description)"
             case .None: return description
             }
         } else {
@@ -52,7 +52,7 @@ final public class ExampleGroup: NSObject {
 
     internal var filterFlags: FilterFlags {
         var aggregateFlags = flags
-        walkUp() { (group: ExampleGroup) -> () in
+        walkUp { (group: ExampleGroup) -> Void in
             for (key, value) in group.flags {
                 aggregateFlags[key] = value
             }
@@ -62,7 +62,7 @@ final public class ExampleGroup: NSObject {
 
     internal var befores: [BeforeExampleWithMetadataClosure] {
         var closures = Array(hooks.befores.reverse())
-        walkUp() { (group: ExampleGroup) -> () in
+        walkUp { (group: ExampleGroup) -> Void in
             closures.appendContentsOf(Array(group.hooks.befores.reverse()))
         }
         return Array(closures.reverse())
@@ -70,13 +70,13 @@ final public class ExampleGroup: NSObject {
 
     internal var afters: [AfterExampleWithMetadataClosure] {
         var closures = hooks.afters
-        walkUp() { (group: ExampleGroup) -> () in
+        walkUp { (group: ExampleGroup) -> Void in
             closures.appendContentsOf(group.hooks.afters)
         }
         return closures
     }
 
-    internal func walkDownExamples(callback: (example: Example) -> ()) {
+    internal func walkDownExamples(callback: (example: Example) -> Void) {
         for example in childExamples {
             callback(example: example)
         }
@@ -95,7 +95,7 @@ final public class ExampleGroup: NSObject {
         childExamples.append(example)
     }
 
-    private func walkUp(callback: (group: ExampleGroup) -> ()) {
+    private func walkUp(callback: (group: ExampleGroup) -> Void) {
         var group = self
         while let parent = group.parent {
             callback(group: parent)

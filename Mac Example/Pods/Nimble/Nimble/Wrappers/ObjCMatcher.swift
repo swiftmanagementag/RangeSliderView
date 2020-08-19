@@ -3,15 +3,15 @@ import Foundation
 public typealias MatcherBlock = (actualExpression: Expression<NSObject>, failureMessage: FailureMessage) -> Bool
 public typealias FullMatcherBlock = (actualExpression: Expression<NSObject>, failureMessage: FailureMessage, shouldNotMatch: Bool) -> Bool
 
-public class NMBObjCMatcher : NSObject, NMBMatcher {
+public class NMBObjCMatcher: NSObject, NMBMatcher {
     let _match: MatcherBlock
     let _doesNotMatch: MatcherBlock
     let canMatchNil: Bool
 
     public init(canMatchNil: Bool, matcher: MatcherBlock, notMatcher: MatcherBlock) {
         self.canMatchNil = canMatchNil
-        self._match = matcher
-        self._doesNotMatch = notMatcher
+        _match = matcher
+        _doesNotMatch = notMatcher
     }
 
     public convenience init(matcher: MatcherBlock) {
@@ -20,7 +20,7 @@ public class NMBObjCMatcher : NSObject, NMBMatcher {
 
     public convenience init(canMatchNil: Bool, matcher: MatcherBlock) {
         self.init(canMatchNil: canMatchNil, matcher: matcher, notMatcher: ({ actualExpression, failureMessage in
-            return !matcher(actualExpression: actualExpression, failureMessage: failureMessage)
+            !matcher(actualExpression: actualExpression, failureMessage: failureMessage)
         }))
     }
 
@@ -30,9 +30,9 @@ public class NMBObjCMatcher : NSObject, NMBMatcher {
 
     public convenience init(canMatchNil: Bool, matcher: FullMatcherBlock) {
         self.init(canMatchNil: canMatchNil, matcher: ({ actualExpression, failureMessage in
-            return matcher(actualExpression: actualExpression, failureMessage: failureMessage, shouldNotMatch: false)
+            matcher(actualExpression: actualExpression, failureMessage: failureMessage, shouldNotMatch: false)
         }), notMatcher: ({ actualExpression, failureMessage in
-            return matcher(actualExpression: actualExpression, failureMessage: failureMessage, shouldNotMatch: true)
+            matcher(actualExpression: actualExpression, failureMessage: failureMessage, shouldNotMatch: true)
         }))
     }
 
@@ -44,7 +44,7 @@ public class NMBObjCMatcher : NSObject, NMBMatcher {
                     return false
                 }
             }
-        } catch let error {
+        } catch {
             failureMessage.actualValue = "an unexpected error thrown: \(error)"
             return false
         }
@@ -55,8 +55,9 @@ public class NMBObjCMatcher : NSObject, NMBMatcher {
         let expr = Expression(expression: actualBlock, location: location)
         let result = _match(
             actualExpression: expr,
-            failureMessage: failureMessage)
-        if self.canMatch(Expression(expression: actualBlock, location: location), failureMessage: failureMessage) {
+            failureMessage: failureMessage
+        )
+        if canMatch(Expression(expression: actualBlock, location: location), failureMessage: failureMessage) {
             return result
         } else {
             return false
@@ -67,12 +68,12 @@ public class NMBObjCMatcher : NSObject, NMBMatcher {
         let expr = Expression(expression: actualBlock, location: location)
         let result = _doesNotMatch(
             actualExpression: expr,
-            failureMessage: failureMessage)
-        if self.canMatch(Expression(expression: actualBlock, location: location), failureMessage: failureMessage) {
+            failureMessage: failureMessage
+        )
+        if canMatch(Expression(expression: actualBlock, location: location), failureMessage: failureMessage) {
             return result
         } else {
             return false
         }
     }
 }
-

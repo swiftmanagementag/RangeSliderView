@@ -13,22 +13,23 @@ public func raiseException(
     named named: String? = nil,
     reason: String? = nil,
     userInfo: NSDictionary? = nil,
-    closure: ((NSException) -> Void)? = nil) -> MatcherFunc<Any> {
-        return MatcherFunc { actualExpression, failureMessage in
+    closure: ((NSException) -> Void)? = nil
+) -> MatcherFunc<Any> {
+    return MatcherFunc { actualExpression, failureMessage in
 
-            var exception: NSException?
-            let capture = NMBExceptionCapture(handler: ({ e in
-                exception = e
-            }), finally: nil)
+        var exception: NSException?
+        let capture = NMBExceptionCapture(handler: ({ e in
+            exception = e
+        }), finally: nil)
 
-            capture.tryBlock {
-                try! actualExpression.evaluate()
-                return
-            }
-
-            setFailureMessageForException(failureMessage, exception: exception, named: named, reason: reason, userInfo: userInfo, closure: closure)
-            return exceptionMatchesNonNilFieldsOrClosure(exception, named: named, reason: reason, userInfo: userInfo, closure: closure)
+        capture.tryBlock {
+            try! actualExpression.evaluate()
+            return
         }
+
+        setFailureMessageForException(failureMessage, exception: exception, named: named, reason: reason, userInfo: userInfo, closure: closure)
+        return exceptionMatchesNonNilFieldsOrClosure(exception, named: named, reason: reason, userInfo: userInfo, closure: closure)
+    }
 }
 
 internal func setFailureMessageForException(
@@ -37,30 +38,31 @@ internal func setFailureMessageForException(
     named: String?,
     reason: String?,
     userInfo: NSDictionary?,
-    closure: ((NSException) -> Void)?) {
-        failureMessage.postfixMessage = "raise exception"
+    closure: ((NSException) -> Void)?
+) {
+    failureMessage.postfixMessage = "raise exception"
 
-        if let named = named {
-            failureMessage.postfixMessage += " with name <\(named)>"
-        }
-        if let reason = reason {
-            failureMessage.postfixMessage += " with reason <\(reason)>"
-        }
-        if let userInfo = userInfo {
-            failureMessage.postfixMessage += " with userInfo <\(userInfo)>"
-        }
-        if let _ = closure {
-            failureMessage.postfixMessage += " that satisfies block"
-        }
-        if named == nil && reason == nil && userInfo == nil && closure == nil {
-            failureMessage.postfixMessage = "raise any exception"
-        }
+    if let named = named {
+        failureMessage.postfixMessage += " with name <\(named)>"
+    }
+    if let reason = reason {
+        failureMessage.postfixMessage += " with reason <\(reason)>"
+    }
+    if let userInfo = userInfo {
+        failureMessage.postfixMessage += " with userInfo <\(userInfo)>"
+    }
+    if let _ = closure {
+        failureMessage.postfixMessage += " that satisfies block"
+    }
+    if named == nil, reason == nil, userInfo == nil, closure == nil {
+        failureMessage.postfixMessage = "raise any exception"
+    }
 
-        if let exception = exception {
-            failureMessage.actualValue = "\(NSStringFromClass(exception.dynamicType)) { name=\(exception.name), reason='\(stringify(exception.reason))', userInfo=\(stringify(exception.userInfo)) }"
-        } else {
-            failureMessage.actualValue = "no exception"
-        }
+    if let exception = exception {
+        failureMessage.actualValue = "\(NSStringFromClass(exception.dynamicType)) { name=\(exception.name), reason='\(stringify(exception.reason))', userInfo=\(stringify(exception.userInfo)) }"
+    } else {
+        failureMessage.actualValue = "no exception"
+    }
 }
 
 internal func exceptionMatchesNonNilFieldsOrClosure(
@@ -68,36 +70,37 @@ internal func exceptionMatchesNonNilFieldsOrClosure(
     named: String?,
     reason: String?,
     userInfo: NSDictionary?,
-    closure: ((NSException) -> Void)?) -> Bool {
-        var matches = false
+    closure: ((NSException) -> Void)?
+) -> Bool {
+    var matches = false
 
-        if let exception = exception {
-            matches = true
+    if let exception = exception {
+        matches = true
 
-            if named != nil && exception.name != named {
-                matches = false
+        if named != nil, exception.name != named {
+            matches = false
+        }
+        if reason != nil, exception.reason != reason {
+            matches = false
+        }
+        if userInfo != nil, exception.userInfo != userInfo {
+            matches = false
+        }
+        if let closure = closure {
+            let assertions = gatherFailingExpectations {
+                closure(exception)
             }
-            if reason != nil && exception.reason != reason {
+            let messages = assertions.map { $0.message }
+            if messages.count > 0 {
                 matches = false
-            }
-            if userInfo != nil && exception.userInfo != userInfo {
-                matches = false
-            }
-            if let closure = closure {
-                let assertions = gatherFailingExpectations {
-                    closure(exception)
-                }
-                let messages = assertions.map { $0.message }
-                if messages.count > 0 {
-                    matches = false
-                }
             }
         }
-        
-        return matches
+    }
+
+    return matches
 }
 
-public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
+public class NMBObjCRaiseExceptionMatcher: NSObject, NMBMatcher {
     internal var _name: String?
     internal var _reason: String?
     internal var _userInfo: NSDictionary?
@@ -111,7 +114,7 @@ public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
     }
 
     public func matches(actualBlock: () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool {
-        let block: () -> Any? = ({ actualBlock(); return nil })
+        let block: () -> Any? = { actualBlock(); return nil }
         let expr = Expression(expression: block, location: location)
 
         return try! raiseException(
@@ -128,7 +131,7 @@ public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
 
     public var named: (name: String) -> NMBObjCRaiseExceptionMatcher {
         return ({ name in
-            return NMBObjCRaiseExceptionMatcher(
+            NMBObjCRaiseExceptionMatcher(
                 name: name,
                 reason: self._reason,
                 userInfo: self._userInfo,
@@ -139,7 +142,7 @@ public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
 
     public var reason: (reason: String?) -> NMBObjCRaiseExceptionMatcher {
         return ({ reason in
-            return NMBObjCRaiseExceptionMatcher(
+            NMBObjCRaiseExceptionMatcher(
                 name: self._name,
                 reason: reason,
                 userInfo: self._userInfo,
@@ -150,7 +153,7 @@ public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
 
     public var userInfo: (userInfo: NSDictionary?) -> NMBObjCRaiseExceptionMatcher {
         return ({ userInfo in
-            return NMBObjCRaiseExceptionMatcher(
+            NMBObjCRaiseExceptionMatcher(
                 name: self._name,
                 reason: self._reason,
                 userInfo: userInfo,
@@ -161,7 +164,7 @@ public class NMBObjCRaiseExceptionMatcher : NSObject, NMBMatcher {
 
     public var satisfyingBlock: (block: ((NSException) -> Void)?) -> NMBObjCRaiseExceptionMatcher {
         return ({ block in
-            return NMBObjCRaiseExceptionMatcher(
+            NMBObjCRaiseExceptionMatcher(
                 name: self._name,
                 reason: self._reason,
                 userInfo: self._userInfo,

@@ -6,7 +6,8 @@ public func expect<T>(@autoclosure(escaping) expression: () throws -> T?, file: 
         expression: Expression(
             expression: expression,
             location: SourceLocation(file: file, line: line),
-            isClosure: true))
+            isClosure: true
+        ))
 }
 
 /// Make an expectation on a given actual value. The closure is lazily invoked.
@@ -15,7 +16,8 @@ public func expect<T>(file: String = __FILE__, line: UInt = __LINE__, expression
         expression: Expression(
             expression: expression,
             location: SourceLocation(file: file, line: line),
-            isClosure: true))
+            isClosure: true
+        ))
 }
 
 /// Always fails the test with a message and a specified location.
@@ -38,23 +40,25 @@ public func fail(file: String = __FILE__, line: UInt = __LINE__) {
 internal func nimblePrecondition(
     @autoclosure expr: () -> Bool,
     @autoclosure _ name: () -> String,
-    @autoclosure _ message: () -> String) -> Bool {
-        let result = expr()
-        if !result {
-            let e = NSException(
-                name: name(),
-                reason: message(),
-                userInfo: nil)
-            e.raise()
-        }
-        return result
+    @autoclosure _ message: () -> String
+) -> Bool {
+    let result = expr()
+    if !result {
+        let e = NSException(
+            name: name(),
+            reason: message(),
+            userInfo: nil
+        )
+        e.raise()
+    }
+    return result
 }
 
 @noreturn
 internal func internalError(msg: String, file: String = __FILE__, line: UInt = __LINE__) {
     fatalError(
         "Nimble Bug Found: \(msg) at \(file):\(line).\n" +
-        "Please file a bug to Nimble: https://github.com/Quick/Nimble/issues with the " +
-        "code snippet that caused this error."
+            "Please file a bug to Nimble: https://github.com/Quick/Nimble/issues with the " +
+            "code snippet that caused this error."
     )
 }

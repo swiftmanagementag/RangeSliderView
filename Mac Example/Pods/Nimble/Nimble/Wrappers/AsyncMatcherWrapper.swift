@@ -6,9 +6,9 @@ internal struct AsyncMatcherWrapper<T, U where U: Matcher, U.ValueType == T>: Ma
     let pollInterval: NSTimeInterval
 
     init(fullMatcher: U, timeoutInterval: NSTimeInterval = 1, pollInterval: NSTimeInterval = 0.01) {
-      self.fullMatcher = fullMatcher
-      self.timeoutInterval = timeoutInterval
-      self.pollInterval = pollInterval
+        self.fullMatcher = fullMatcher
+        self.timeoutInterval = timeoutInterval
+        self.pollInterval = pollInterval
     }
 
     func matches(actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool {
@@ -19,10 +19,11 @@ internal struct AsyncMatcherWrapper<T, U where U: Matcher, U.ValueType == T>: Ma
             timeoutInterval: timeoutInterval,
             file: actualExpression.location.file,
             line: actualExpression.location.line,
-            fnName: fnName) {
-                try self.fullMatcher.matches(uncachedExpression, failureMessage: failureMessage)
+            fnName: fnName
+        ) {
+            try self.fullMatcher.matches(uncachedExpression, failureMessage: failureMessage)
         }
-        switch (result) {
+        switch result {
         case let .Completed(isSuccessful): return isSuccessful
         case .TimedOut: return false
         case let .ErrorThrown(error):
@@ -39,17 +40,18 @@ internal struct AsyncMatcherWrapper<T, U where U: Matcher, U.ValueType == T>: Ma
         }
     }
 
-    func doesNotMatch(actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool  {
+    func doesNotMatch(actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool {
         let uncachedExpression = actualExpression.withoutCaching()
         let result = pollBlock(
             pollInterval: pollInterval,
             timeoutInterval: timeoutInterval,
             file: actualExpression.location.file,
             line: actualExpression.location.line,
-            fnName: "expect(...).toEventuallyNot(...)") {
-                try self.fullMatcher.doesNotMatch(uncachedExpression, failureMessage: failureMessage)
+            fnName: "expect(...).toEventuallyNot(...)"
+        ) {
+            try self.fullMatcher.doesNotMatch(uncachedExpression, failureMessage: failureMessage)
         }
-        switch (result) {
+        switch result {
         case let .Completed(isSuccessful): return isSuccessful
         case .TimedOut: return false
         case let .ErrorThrown(error):
@@ -69,7 +71,6 @@ internal struct AsyncMatcherWrapper<T, U where U: Matcher, U.ValueType == T>: Ma
 
 private let toEventuallyRequiresClosureError = FailureMessage(stringValue: "expect(...).toEventually(...) requires an explicit closure (eg - expect { ... }.toEventually(...) )\nSwift 1.2 @autoclosure behavior has changed in an incompatible way for Nimble to function")
 
-
 extension Expectation {
     /// Tests the actual value using a matcher to match by checking continuously
     /// at each pollInterval until the timeout is reached.
@@ -84,7 +85,8 @@ extension Expectation {
                 matcher: AsyncMatcherWrapper(
                     fullMatcher: matcher,
                     timeoutInterval: timeout,
-                    pollInterval: pollInterval),
+                    pollInterval: pollInterval
+                ),
                 to: "to eventually",
                 description: description
             )
@@ -107,7 +109,8 @@ extension Expectation {
                 matcher: AsyncMatcherWrapper(
                     fullMatcher: matcher,
                     timeoutInterval: timeout,
-                    pollInterval: pollInterval),
+                    pollInterval: pollInterval
+                ),
                 toNot: "to eventually not",
                 description: description
             )

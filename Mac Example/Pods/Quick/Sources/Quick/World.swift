@@ -1,74 +1,74 @@
 import Foundation
 
 /**
-    A closure that, when evaluated, returns a dictionary of key-value
-    pairs that can be accessed from within a group of shared examples.
-*/
+ A closure that, when evaluated, returns a dictionary of key-value
+ pairs that can be accessed from within a group of shared examples.
+ */
 public typealias SharedExampleContext = () -> (NSDictionary)
 
 /**
-    A closure that is used to define a group of shared examples. This
-    closure may contain any number of example and example groups.
-*/
-public typealias SharedExampleClosure = (SharedExampleContext) -> ()
+ A closure that is used to define a group of shared examples. This
+ closure may contain any number of example and example groups.
+ */
+public typealias SharedExampleClosure = (SharedExampleContext) -> Void
 
 /**
-    A collection of state Quick builds up in order to work its magic.
-    World is primarily responsible for maintaining a mapping of QuickSpec
-    classes to root example groups for those classes.
+ A collection of state Quick builds up in order to work its magic.
+ World is primarily responsible for maintaining a mapping of QuickSpec
+ classes to root example groups for those classes.
 
-    It also maintains a mapping of shared example names to shared
-    example closures.
+ It also maintains a mapping of shared example names to shared
+ example closures.
 
-    You may configure how Quick behaves by calling the -[World configure:]
-    method from within an overridden +[QuickConfiguration configure:] method.
-*/
-final internal class World: NSObject {
+ You may configure how Quick behaves by calling the -[World configure:]
+ method from within an overridden +[QuickConfiguration configure:] method.
+ */
+internal final class World: NSObject {
     /**
-        The example group that is currently being run.
-        The DSL requires that this group is correctly set in order to build a
-        correct hierarchy of example groups and their examples.
-    */
+         The example group that is currently being run.
+         The DSL requires that this group is correctly set in order to build a
+         correct hierarchy of example groups and their examples.
+     */
     internal var currentExampleGroup: ExampleGroup!
 
     /**
-        The example metadata of the test that is currently being run.
-        This is useful for using the Quick test metadata (like its name) at
-        runtime.
-    */
+         The example metadata of the test that is currently being run.
+         This is useful for using the Quick test metadata (like its name) at
+         runtime.
+     */
 
     internal var currentExampleMetadata: ExampleMetadata?
 
     /**
-        A flag that indicates whether additional test suites are being run
-        within this test suite. This is only true within the context of Quick
-        functional tests.
-    */
+         A flag that indicates whether additional test suites are being run
+         within this test suite. This is only true within the context of Quick
+         functional tests.
+     */
     internal var isRunningAdditionalSuites = false
 
-    private var specs: Dictionary<String, ExampleGroup> = [:]
+    private var specs: [String: ExampleGroup] = [:]
     private var sharedExamples: [String: SharedExampleClosure] = [:]
     private let configuration = Configuration()
     private var isConfigurationFinalized = false
 
-    internal var exampleHooks: ExampleHooks {return configuration.exampleHooks }
+    internal var exampleHooks: ExampleHooks { return configuration.exampleHooks }
     internal var suiteHooks: SuiteHooks { return configuration.suiteHooks }
 
     // MARK: Singleton Constructor
 
-    private override init() {}
+    override private init() {}
     static let sharedWorld = World()
 
     // MARK: Public Interface
 
     /**
-        Exposes the World's Configuration object within the scope of the closure
-        so that it may be configured. This method must not be called outside of
-        an overridden +[QuickConfiguration configure:] method.
+         Exposes the World's Configuration object within the scope of the closure
+         so that it may be configured. This method must not be called outside of
+         an overridden +[QuickConfiguration configure:] method.
 
-        - parameter closure:  A closure that takes a Configuration object that can
-                         be mutated to change Quick's behavior.
-    */
+         - parameter closure:  A closure that takes a Configuration object that can
+                          be mutated to change Quick's behavior.
+     */
     internal func configure(closure: QuickConfigurer) {
         assert(!isConfigurationFinalized,
                "Quick cannot be configured outside of a +[QuickConfiguration configure:] method. You should not call -[World configure:] directly. Instead, subclass QuickConfiguration and override the +[QuickConfiguration configure:] method.")
@@ -76,31 +76,31 @@ final internal class World: NSObject {
     }
 
     /**
-        Finalizes the World's configuration.
-        Any subsequent calls to World.configure() will raise.
-    */
+         Finalizes the World's configuration.
+         Any subsequent calls to World.configure() will raise.
+     */
     internal func finalizeConfiguration() {
         isConfigurationFinalized = true
     }
 
     /**
-        Returns an internally constructed root example group for the given
-        QuickSpec class.
+         Returns an internally constructed root example group for the given
+         QuickSpec class.
 
-        A root example group with the description "root example group" is lazily
-        initialized for each QuickSpec class. This root example group wraps the
-        top level of a -[QuickSpec spec] method--it's thanks to this group that
-        users can define beforeEach and it closures at the top level, like so:
+         A root example group with the description "root example group" is lazily
+         initialized for each QuickSpec class. This root example group wraps the
+         top level of a -[QuickSpec spec] method--it's thanks to this group that
+         users can define beforeEach and it closures at the top level, like so:
 
-            override func spec() {
-                // These belong to the root example group
-                beforeEach {}
-                it("is at the top level") {}
-            }
+             override func spec() {
+                 // These belong to the root example group
+                 beforeEach {}
+                 it("is at the top level") {}
+             }
 
-        - parameter cls: The QuickSpec class for which to retrieve the root example group.
-        - returns: The root example group for the class.
-    */
+         - parameter cls: The QuickSpec class for which to retrieve the root example group.
+         - returns: The root example group for the class.
+     */
     internal func rootExampleGroupForSpecClass(cls: AnyClass) -> ExampleGroup {
         #if _runtime(_ObjC)
             let name = NSStringFromClass(cls)
@@ -122,14 +122,14 @@ final internal class World: NSObject {
     }
 
     /**
-        Returns all examples that should be run for a given spec class.
-        There are two filtering passes that occur when determining which examples should be run.
-        That is, these examples are the ones that are included by inclusion filters, and are
-        not excluded by exclusion filters.
+         Returns all examples that should be run for a given spec class.
+         There are two filtering passes that occur when determining which examples should be run.
+         That is, these examples are the ones that are included by inclusion filters, and are
+         not excluded by exclusion filters.
 
-        - parameter specClass: The QuickSpec subclass for which examples are to be returned.
-        - returns: A list of examples to be run as test invocations.
-    */
+         - parameter specClass: The QuickSpec subclass for which examples are to be returned.
+         - returns: A list of examples to be run as test invocations.
+     */
     internal func examples(specClass: AnyClass) -> [Example] {
         // 1. Grab all included examples.
         let included = includedExamples
@@ -141,12 +141,12 @@ final internal class World: NSObject {
         }
     }
 
-#if _runtime(_ObjC)
-    @objc(examplesForSpecClass:)
-    private func objc_examples(specClass: AnyClass) -> [Example] {
-        return examples(specClass)
-    }
-#endif
+    #if _runtime(_ObjC)
+        @objc(examplesForSpecClass:)
+        private func objc_examples(specClass: AnyClass) -> [Example] {
+            return examples(specClass)
+        }
+    #endif
 
     // MARK: Internal
 
@@ -163,7 +163,7 @@ final internal class World: NSObject {
     internal var exampleCount: Int {
         return allExamples.count
     }
-    
+
     internal var beforesCurrentlyExecuting: Bool {
         let suiteBeforesExecuting = suiteHooks.phase == .BeforesExecuting
         let exampleBeforesExecuting = exampleHooks.phase == .BeforesExecuting
@@ -171,10 +171,10 @@ final internal class World: NSObject {
         if let runningExampleGroup = currentExampleMetadata?.example.group {
             groupBeforesExecuting = runningExampleGroup.phase == .BeforesExecuting
         }
-        
+
         return suiteBeforesExecuting || exampleBeforesExecuting || groupBeforesExecuting
     }
-    
+
     internal var aftersCurrentlyExecuting: Bool {
         let suiteAftersExecuting = suiteHooks.phase == .AftersExecuting
         let exampleAftersExecuting = exampleHooks.phase == .AftersExecuting
@@ -182,7 +182,7 @@ final internal class World: NSObject {
         if let runningExampleGroup = currentExampleMetadata?.example.group {
             groupAftersExecuting = runningExampleGroup.phase == .AftersExecuting
         }
-        
+
         return suiteAftersExecuting || exampleAftersExecuting || groupAftersExecuting
     }
 
@@ -197,10 +197,10 @@ final internal class World: NSObject {
     private var includedExamples: [Example] {
         let all = allExamples
         let included = all.filter { example in
-            return self.configuration.inclusionFilters.reduce(false) { $0 || $1(example: example) }
+            self.configuration.inclusionFilters.reduce(false) { $0 || $1(example: example) }
         }
 
-        if included.isEmpty && configuration.runAllWhenEverythingFiltered {
+        if included.isEmpty, configuration.runAllWhenEverythingFiltered {
             return all
         } else {
             return included

@@ -5,7 +5,7 @@ import Foundation
 internal func memoizedClosure<T>(closure: () throws -> T) -> (Bool) throws -> T {
     var cache: T?
     return ({ withoutCaching in
-        if (withoutCaching || cache == nil) {
+        if withoutCaching || cache == nil {
             cache = try closure()
         }
         return cache!
@@ -41,9 +41,9 @@ public struct Expression<T> {
     ///                  flexibility if @autoclosure behavior changes between
     ///                  Swift versions. Nimble internals always sets this true.
     public init(expression: () throws -> T?, location: SourceLocation, isClosure: Bool = true) {
-        self._expression = memoizedClosure(expression)
+        _expression = memoizedClosure(expression)
         self.location = location
-        self._withoutCaching = false
+        _withoutCaching = false
         self.isClosure = isClosure
     }
 
@@ -62,9 +62,9 @@ public struct Expression<T> {
     ///                  flexibility if @autoclosure behavior changes between
     ///                  Swift versions. Nimble internals always sets this true.
     public init(memoizedExpression: (Bool) throws -> T?, location: SourceLocation, withoutCaching: Bool, isClosure: Bool = true) {
-        self._expression = memoizedExpression
+        _expression = memoizedExpression
         self.location = location
-        self._withoutCaching = withoutCaching
+        _withoutCaching = withoutCaching
         self.isClosure = isClosure
     }
 
@@ -77,14 +77,14 @@ public struct Expression<T> {
     /// @param block The block that can cast the current Expression value to a
     ///              new type.
     public func cast<U>(block: (T?) throws -> U?) -> Expression<U> {
-        return Expression<U>(expression: ({ try block(self.evaluate()) }), location: self.location, isClosure: self.isClosure)
+        return Expression<U>(expression: ({ try block(self.evaluate()) }), location: location, isClosure: isClosure)
     }
 
     public func evaluate() throws -> T? {
-        return try self._expression(_withoutCaching)
+        return try _expression(_withoutCaching)
     }
 
     public func withoutCaching() -> Expression<T> {
-        return Expression(memoizedExpression: self._expression, location: location, withoutCaching: true, isClosure: isClosure)
+        return Expression(memoizedExpression: _expression, location: location, withoutCaching: true, isClosure: isClosure)
     }
 }

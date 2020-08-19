@@ -9,17 +9,17 @@
 import Foundation
 
 precedencegroup FramePrecendence {
-	associativity: left
-	higherThan: AssignmentPrecedence
-
-}
-infix operator |> : FramePrecendence 
-
-func |> <T, W> (left: T?, right: (T) -> W?) -> W? {
-  guard let left = left else { return nil }
-  return right(left)
+    associativity: left
+    higherThan: AssignmentPrecedence
 }
 
-func |> <T, W> (left: T, right: (T) -> W) -> W {
-  return right(left)
+infix operator |>: FramePrecendence
+
+func |> <T, W>(left: T?, right: (T) -> W?) -> W? {
+    guard let left = left else { return nil }
+    return right(left)
+}
+
+func |> <T, W>(left: T, right: (T) -> W) -> W {
+    return right(left)
 }

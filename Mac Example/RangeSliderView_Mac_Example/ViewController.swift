@@ -10,26 +10,23 @@ import Cocoa
 import RangeSliderView
 
 class ViewController: NSViewController {
+    @IBOutlet var rangeSliderView: RangeSliderView!
 
-  @IBOutlet var rangeSliderView: RangeSliderView!
+    @IBOutlet var minimumLabel: NSTextField!
+    @IBOutlet var maximumLabel: NSTextField!
 
-  @IBOutlet var minimumLabel: NSTextField!
-  @IBOutlet var maximumLabel: NSTextField!
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    
-    rangeSliderView.selectedValuesChanged = { min, max in
-      self.minimumLabel.stringValue = "\(min)"
-      self.maximumLabel.stringValue = "\(max)"
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        rangeSliderView.selectedValuesChanged = { min, max in
+            self.minimumLabel.stringValue = "\(min)"
+            self.maximumLabel.stringValue = "\(max)"
+        }
     }
-  }
 
-  override var representedObject: AnyObject? {
-    didSet {
-    // Update the view, if already loaded.
+    override var representedObject: AnyObject? {
+        didSet {
+            // Update the view, if already loaded.
+        }
     }
-  }
-  
 }
-

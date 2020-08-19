@@ -10,7 +10,7 @@ internal func expressionMatches<T, U where U: Matcher, U.ValueType == T>(express
             msg.actualValue = "<\(stringify(try expression.evaluate()))>"
         }
         return (pass, msg)
-    } catch let error {
+    } catch {
         msg.actualValue = "an unexpected error thrown: <\(error)>"
         return (false, msg)
     }
@@ -26,7 +26,7 @@ internal func expressionDoesNotMatch<T, U where U: Matcher, U.ValueType == T>(ex
             msg.actualValue = "<\(stringify(try expression.evaluate()))>"
         }
         return (pass, msg)
-    } catch let error {
+    } catch {
         msg.actualValue = "an unexpected error thrown: <\(error)>"
         return (false, msg)
     }

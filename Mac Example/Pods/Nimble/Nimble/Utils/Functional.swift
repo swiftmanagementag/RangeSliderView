@@ -8,4 +8,3 @@ internal func all<T>(array: [T], fn: (T) -> Bool) -> Bool {
     }
     return true
 }
-

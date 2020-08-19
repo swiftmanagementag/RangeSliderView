@@ -1,6 +1,5 @@
 import Foundation
 
-
 internal func identityAsString(value: AnyObject?) -> String {
     if value == nil {
         return "nil"
@@ -33,30 +32,30 @@ internal func stringify<S: SequenceType>(value: S) -> String {
     return "[\(str)]"
 }
 
-extension NSArray : NMBStringer {
+extension NSArray: NMBStringer {
     func NMB_stringify() -> String {
-        let str = self.componentsJoinedByString(", ")
+        let str = componentsJoinedByString(", ")
         return "[\(str)]"
     }
 }
 
 internal func stringify<T>(value: T) -> String {
     if let value = value as? Double {
-        return NSString(format: "%.4f", (value)).description
+        return NSString(format: "%.4f", value).description
     }
     return String(value)
 }
 
 internal func stringify(value: NMBDoubleConvertible) -> String {
     if let value = value as? Double {
-        return NSString(format: "%.4f", (value)).description
+        return NSString(format: "%.4f", value).description
     }
     return value.stringRepresentation
 }
 
 internal func stringify<T>(value: T?) -> String {
     if let unboxed = value {
-       return stringify(unboxed)
+        return stringify(unboxed)
     }
     return "nil"
 }

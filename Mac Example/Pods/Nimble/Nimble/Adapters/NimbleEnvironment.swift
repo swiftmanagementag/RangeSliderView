@@ -24,12 +24,14 @@ internal class NimbleEnvironment {
         get { return NimbleAssertionHandler }
         set { NimbleAssertionHandler = newValue }
     }
+
     var awaiter: Awaiter
 
     init() {
         awaiter = Awaiter(
             waitLock: AssertionWaitLock(),
             asyncQueue: dispatch_get_main_queue(),
-            timeoutQueue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0))
+            timeoutQueue: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0)
+        )
     }
 }

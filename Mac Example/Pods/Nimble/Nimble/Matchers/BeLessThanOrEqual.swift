@@ -19,17 +19,17 @@ public func beLessThanOrEqualTo<T: NMBComparable>(expectedValue: T?) -> NonNilMa
     }
 }
 
-public func <=<T: Comparable>(lhs: Expectation<T>, rhs: T) {
+public func <= <T: Comparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beLessThanOrEqualTo(rhs))
 }
 
-public func <=<T: NMBComparable>(lhs: Expectation<T>, rhs: T) {
+public func <= <T: NMBComparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beLessThanOrEqualTo(rhs))
 }
 
 extension NMBObjCMatcher {
     public class func beLessThanOrEqualToMatcher(expected: NMBComparable?) -> NMBObjCMatcher {
-        return NMBObjCMatcher(canMatchNil:false) { actualExpression, failureMessage in
+        return NMBObjCMatcher(canMatchNil: false) { actualExpression, failureMessage in
             let expr = actualExpression.cast { $0 as? NMBComparable }
             return try! beLessThanOrEqualTo(expected).matches(expr, failureMessage: failureMessage)
         }

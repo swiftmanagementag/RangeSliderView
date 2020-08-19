@@ -61,7 +61,7 @@ private func contain(items: [AnyObject?]) -> NonNilMatcherFunc<NMBContainer> {
         failureMessage.postfixMessage = "contain <\(arrayAsString(items))>"
         let actual = try actualExpression.evaluate()
         return all(items) { item in
-            return actual != nil && actual!.containsObject(item)
+            actual != nil && actual!.containsObject(item)
         }
     }
 }
@@ -75,7 +75,7 @@ extension NMBObjCMatcher {
                 let expr = Expression(expression: ({ value as NMBContainer }), location: location)
 
                 // A straightforward cast on the array causes this to crash, so we have to cast the individual items
-                let expectedOptionals: [AnyObject?] = expected.map({ $0 as AnyObject? })
+                let expectedOptionals: [AnyObject?] = expected.map { $0 as AnyObject? }
                 return try! contain(expectedOptionals).matches(expr, failureMessage: failureMessage)
             } else if let value = actualValue as? NSString {
                 let expr = Expression(expression: ({ value as String }), location: location)

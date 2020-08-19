@@ -18,11 +18,11 @@ public func beLessThan(expectedValue: NMBComparable?) -> NonNilMatcherFunc<NMBCo
     }
 }
 
-public func <<T: Comparable>(lhs: Expectation<T>, rhs: T) {
+public func < <T: Comparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beLessThan(rhs))
 }
 
-public func <(lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
+public func < (lhs: Expectation<NMBComparable>, rhs: NMBComparable?) {
     lhs.to(beLessThan(rhs))
 }
 

@@ -1,23 +1,25 @@
-internal struct ObjCMatcherWrapper : Matcher {
+internal struct ObjCMatcherWrapper: Matcher {
     let matcher: NMBMatcher
 
     func matches(actualExpression: Expression<NSObject>, failureMessage: FailureMessage) -> Bool {
         return matcher.matches(
             ({ try! actualExpression.evaluate() }),
             failureMessage: failureMessage,
-            location: actualExpression.location)
+            location: actualExpression.location
+        )
     }
 
     func doesNotMatch(actualExpression: Expression<NSObject>, failureMessage: FailureMessage) -> Bool {
         return matcher.doesNotMatch(
             ({ try! actualExpression.evaluate() }),
             failureMessage: failureMessage,
-            location: actualExpression.location)
+            location: actualExpression.location
+        )
     }
 }
 
 // Equivalent to Expectation, but for Nimble's Objective-C interface
-public class NMBExpectation : NSObject {
+public class NMBExpectation: NSObject {
     internal let _actualBlock: () -> NSObject!
     internal var _negative: Bool
     internal let _file: String
@@ -25,14 +27,14 @@ public class NMBExpectation : NSObject {
     internal var _timeout: NSTimeInterval = 1.0
 
     public init(actualBlock: () -> NSObject!, negative: Bool, file: String, line: UInt) {
-        self._actualBlock = actualBlock
-        self._negative = negative
-        self._file = file
-        self._line = line
+        _actualBlock = actualBlock
+        _negative = negative
+        _file = file
+        _line = line
     }
 
     private var expectValue: Expectation<NSObject> {
-        return expect(_file, line: _line){
+        return expect(_file, line: _line) {
             self._actualBlock() as NSObject?
         }
     }

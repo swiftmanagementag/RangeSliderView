@@ -21,11 +21,11 @@ public func beGreaterThanOrEqualTo<T: NMBComparable>(expectedValue: T?) -> NonNi
     }
 }
 
-public func >=<T: Comparable>(lhs: Expectation<T>, rhs: T) {
+public func >= <T: Comparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beGreaterThanOrEqualTo(rhs))
 }
 
-public func >=<T: NMBComparable>(lhs: Expectation<T>, rhs: T) {
+public func >= <T: NMBComparable>(lhs: Expectation<T>, rhs: T) {
     lhs.to(beGreaterThanOrEqualTo(rhs))
 }
 

@@ -22,7 +22,7 @@ public struct AssertionRecord: CustomStringConvertible {
 /// This is useful for testing failure messages for matchers.
 ///
 /// @see AssertionHandler
-public class AssertionRecorder : AssertionHandler {
+public class AssertionRecorder: AssertionHandler {
     /// All the assertions that were captured by this recorder
     public var assertions = [AssertionRecord]()
 
@@ -33,7 +33,8 @@ public class AssertionRecorder : AssertionHandler {
             AssertionRecord(
                 success: assertion,
                 message: message,
-                location: location))
+                location: location
+            ))
     }
 }
 
@@ -61,7 +62,7 @@ public func withAssertionHandler(tempAssertionHandler: AssertionHandler, closure
 /// This can be useful if you want to gather information about expectations
 /// that occur within a closure.
 ///
-/// @param silently expectations are no longer send to the default Nimble 
+/// @param silently expectations are no longer send to the default Nimble
 ///                 assertion handler when this is true. Defaults to false.
 ///
 /// @see gatherFailingExpectations

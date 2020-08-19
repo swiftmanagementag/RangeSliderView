@@ -17,31 +17,34 @@ public protocol Matcher {
 @objc public protocol NMBContainer {
     func containsObject(object: AnyObject!) -> Bool
 }
-extension NSArray : NMBContainer {}
-extension NSSet : NMBContainer {}
-extension NSHashTable : NMBContainer {}
+
+extension NSArray: NMBContainer {}
+extension NSSet: NMBContainer {}
+extension NSHashTable: NMBContainer {}
 
 /// Protocol for types that support only beEmpty(), haveCount() matchers
 @objc public protocol NMBCollection {
     var count: Int { get }
 }
-extension NSSet : NMBCollection {}
-extension NSDictionary : NMBCollection {}
-extension NSHashTable : NMBCollection {}
-extension NSMapTable : NMBCollection {}
+
+extension NSSet: NMBCollection {}
+extension NSDictionary: NMBCollection {}
+extension NSHashTable: NMBCollection {}
+extension NSMapTable: NMBCollection {}
 
 /// Protocol for types that support beginWith(), endWith(), beEmpty() matchers
-@objc public protocol NMBOrderedCollection : NMBCollection {
+@objc public protocol NMBOrderedCollection: NMBCollection {
     func indexOfObject(object: AnyObject!) -> Int
 }
-extension NSArray : NMBOrderedCollection {}
+
+extension NSArray: NMBOrderedCollection {}
 
 /// Protocol for types to support beCloseTo() matcher
 @objc public protocol NMBDoubleConvertible {
     var doubleValue: CDouble { get }
 }
-extension NSNumber : NMBDoubleConvertible {
-}
+
+extension NSNumber: NMBDoubleConvertible {}
 
 private let dateFormatter: NSDateFormatter = {
     let formatter = NSDateFormatter()
@@ -53,30 +56,25 @@ private let dateFormatter: NSDateFormatter = {
 
 extension NSDate: NMBDoubleConvertible {
     public var doubleValue: CDouble {
-        get {
-            return self.timeIntervalSinceReferenceDate
-        }
+        return timeIntervalSinceReferenceDate
     }
 }
 
-
 extension NMBDoubleConvertible {
     public var stringRepresentation: String {
-        get {
-            if let date = self as? NSDate {
-                return dateFormatter.stringFromDate(date)
-            }
-            
-            if let debugStringConvertible = self as? CustomDebugStringConvertible {
-                return debugStringConvertible.debugDescription
-            }
-            
-            if let stringConvertible = self as? CustomStringConvertible {
-                return stringConvertible.description
-            }
-            
-            return ""
+        if let date = self as? NSDate {
+            return dateFormatter.stringFromDate(date)
         }
+
+        if let debugStringConvertible = self as? CustomDebugStringConvertible {
+            return debugStringConvertible.debugDescription
+        }
+
+        if let stringConvertible = self as? CustomStringConvertible {
+            return stringConvertible.description
+        }
+
+        return ""
     }
 }
 
@@ -87,12 +85,14 @@ extension NMBDoubleConvertible {
 @objc public protocol NMBComparable {
     func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult
 }
-extension NSNumber : NMBComparable {
+
+extension NSNumber: NMBComparable {
     public func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult {
         return compare(otherObject as! NSNumber)
     }
 }
-extension NSString : NMBComparable {
+
+extension NSString: NMBComparable {
     public func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult {
         return compare(otherObject as! String)
     }
